@@ -13,8 +13,15 @@ anasayfa
                 <img src="{{urun.resim.url}}" class="card-img-top" alt="...">
                 <div class="card-body">
                     <h5 class="card-title">{{urun.isim}}</h5>
-                    <p class="card-text fs-6">{{urun.indirimlifiyat}} ₺ <del class="text-secondary">{{urun.fiyat}}  </del></p>
-                    <a href="#" class="btn btn-success"style=widht:100%">Satın AL</a>
+                    <p class="card-text fs-6">
+                        {% if urun.indirimlifiyat %}
+                        {{urun.indirimlifiyat}} ₺
+                        <del class="text-secondary">{{urun.fiyat}}</del>
+                        {% else %}
+                        {{urun.fiyat}} ₺
+                        {% endif %}
+                    </p>
+                    <a href="/{{urun.slug}}" class="btn btn-success" style="width:100%">Satın AL</a>
                 </div>
             </div>
         </div>
@@ -22,10 +29,3 @@ anasayfa
     </div>
 </div>
 {% endblock %}
-
-
-
-
-
-
-

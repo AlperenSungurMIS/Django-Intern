@@ -1,11 +1,9 @@
 from django.contrib.auth.models import User
 from django.db import models
 
-
 class Kategoriler(models.Model):
     isim = models.CharField(max_length=155)
-    ustkategori = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True,
-                                    help_text="Eğer bu kategori başka kategoriye bağlıysa doldurunuz")
+    ustkategori = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True, help_text="Eğer bu kategori başka kategoriye bağlıysa doldurunuz")
     aktifmi = models.BooleanField(default=True)
     seo_title = models.CharField(max_length=155, blank=True, null=True)
     seo_description = models.TextField(blank=True, null=True)
@@ -17,7 +15,6 @@ class Kategoriler(models.Model):
 
     def __str__(self):
         return self.isim
-
 
 class Markalar(models.Model):
     isim = models.CharField(max_length=255, default="")
@@ -35,13 +32,11 @@ class Markalar(models.Model):
     def __str__(self):
         return self.isim
 
-
 class Etiketler(models.Model):
     isim = models.CharField(max_length=50, unique=True)
 
     def __str__(self):
         return self.isim
-
 
 class Urunler(models.Model):
     isim = models.CharField(max_length=155)
@@ -58,7 +53,8 @@ class Urunler(models.Model):
     tarih = models.DateTimeField(auto_now_add=True)
     marka = models.ForeignKey(Markalar, on_delete=models.CASCADE)
     kategori = models.ForeignKey(Kategoriler, on_delete=models.CASCADE)
-    etiketler = models.ManyToManyField(Etiketler, blank=True)  # ManyToMany ilişki eklendi
+    etiketler = models.ManyToManyField(Etiketler, blank=True)
+    anasayfa = models.BooleanField(default=True)
 
     class Meta:
         verbose_name_plural = "Ürünler"
