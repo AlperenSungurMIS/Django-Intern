@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Kategoriler, Markalar, Urunler, Etiketler
+from .models import Kategoriler, Markalar, Urunler, Etiketler, Varyasyonlar
 
 # Kategoriler Admin Tanımı
 class KategoriAdmin(admin.ModelAdmin):
@@ -21,12 +21,18 @@ admin.site.register(Markalar, MarkalarAdmin)
 class EtiketlerAdmin(admin.ModelAdmin):
     list_display = ['isim']
 
-admin.site.register(Etiketler, EtiketlerAdmin)  # Etiketler modelinin kaydı
+admin.site.register(Etiketler, EtiketlerAdmin)
+
+# Varyasyonlar Inline Tanımı
+class InLineVaryasyonlar(admin.StackedInline):  # Burada iki nokta üst üste eklendi
+    model = Varyasyonlar
+    extra = 1
 
 # Ürünler Admin Tanımı
 class UrunlerAdmin(admin.ModelAdmin):
     list_display = ["isim", "fiyat", "marka", "kategori", "indirimlifiyat", "aktifmi", "resim", "tarih"]
     list_filter = ["aktifmi", "isim", "kategori", "marka"]
     search_fields = ["isim", "seo_title", "slug"]
+    inlines = [InLineVaryasyonlar]  # 'inlines' küçük harfle yazıldı
 
 admin.site.register(Urunler, UrunlerAdmin)

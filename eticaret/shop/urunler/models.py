@@ -1,9 +1,12 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils.text import slugify
+
 
 class Kategoriler(models.Model):
     isim = models.CharField(max_length=155)
-    ustkategori = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True, help_text="Eğer bu kategori başka kategoriye bağlıysa doldurunuz")
+    ustkategori = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True,
+                                    help_text="Eğer bu kategori başka kategoriye bağlıysa doldurunuz")
     aktifmi = models.BooleanField(default=True)
     seo_title = models.CharField(max_length=155, blank=True, null=True)
     seo_description = models.TextField(blank=True, null=True)
@@ -15,6 +18,7 @@ class Kategoriler(models.Model):
 
     def __str__(self):
         return self.isim
+
 
 class Markalar(models.Model):
     isim = models.CharField(max_length=255, default="")
@@ -32,11 +36,13 @@ class Markalar(models.Model):
     def __str__(self):
         return self.isim
 
+
 class Etiketler(models.Model):
     isim = models.CharField(max_length=50, unique=True)
 
     def __str__(self):
         return self.isim
+
 
 class Urunler(models.Model):
     isim = models.CharField(max_length=155)
@@ -62,3 +68,32 @@ class Urunler(models.Model):
 
     def __str__(self):
         return self.isim
+
+    def save(self, *args, **kwargs):
+        # Eğer slug boşsa, isime göre otomatik oluştur.
+        if not self.slug:
+            self.slug = slugify(self.isim)
+
+        # Eğer indirimli fiyat girilmemişse, normal fiyatı kullan.
+        if not self.indirimlifiyat:
+            self.indirimlifiyat = self.fiyat
+
+        # Standart save fonksiyonunu çağır.
+        super(Urunler, self).save(*args, **kwargs)
+
+
+class Varyasyonlar(models.Model):
+    urun = models.ForeignKey(Urunler, on_delete=models.CASCADE)
+    varyasyon = models.CharField(max_length=155)
+    fiyat = models.DecimalField(max_digits=10, decimal_places=2)
+    stok = models.IntegerField()
+    aktifmi = models.BooleanField(default=True)
+    resim = models.ImageField(upload_to="varyasyonresimleri", blank=True, null=True)
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True)
+
+    class Meta:
+        verbose_name_plural = "Varyasyonlar"
+        verbose_name = "Varyasyon"
+
+    def __str__(self):
+        return self.varyasyon
