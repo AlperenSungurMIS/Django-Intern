@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitter Clone</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #e6ecf0;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .container {
+            max-width: 600px;
+            margin-top: 20px;
+        }
+
+        .tweet-box {
+            background-color: white;
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .tweet-box img {
+            border-radius: 50%;
+        }
+
+        .tweet-box h5 {
+            margin-bottom: 0;
+            font-size: 16px;
+        }
+
+        .tweet-box p {
+            color: #333;
+            margin-top: 5px;
+        }
+
+        .tweet-box small {
+            color: #8899a6;
+        }
+
+        .tweet-box img.tweet-image {
+            border-radius: 10px;
+            margin-top: 10px;
+            max-width: 100%;
+            height: auto;
+        }
+
+        .tweet-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+
+        .tweet-actions button,
+        .tweet-actions a {
+            border: none;
+            background: none;
+            color: #1da1f2;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .tweet-actions button:hover,
+        .tweet-actions a:hover {
+            text-decoration: underline;
+        }
+
+        .new-tweet {
+            background-color: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .new-tweet textarea {
+            width: 100%;
+            border: none;
+            resize: none;
+            padding: 10px;
+            height: 60px;
+            border-radius: 5px;
+            background-color: #f5f8fa;
+            margin-bottom: 10px;
+        }
+
+        .new-tweet button {
+            background-color: #1da1f2;
+            color: white;
+            border-radius: 20px;
+            border: none;
+            padding: 8px 16px;
+        }
+
+        .new-tweet button:hover {
+            background-color: #0d8de0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1 class="text-center mb-4">Twitter Clone</h1>
+
+        <!-- Yeni Tweet Gönderme -->
+        <div class="new-tweet">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <textarea name="content" placeholder="Neler oluyor?" maxlength="280"></textarea>
+                <input type="file" name="image" class="form-control mb-2">
+                <button type="submit" class="btn">Tweetle</button>
+            </form>
+        </div>
+
+        <!-- Tweet Listeleme -->
+        <ul class="list-unstyled">
+            {% for post in posts %}
+            <li class="tweet-box">
+                <div class="d-flex align-items-start">
+                    <img src="{{ post.user.profile.profile_image.url }}" alt="{{ post.user.username }}" class="me-3" width="40" height="40">
+                    <div>
+                        <h5>{{ post.user.username }}</h5>
+                        <small>{{ post.created_at|date:"d M Y H:i" }}</small>
+                        <p>{{ post.content }}</p>
+
+                        {% if post.image %}
+                            <img src="{{ post.image.url }}" alt="Tweet image" class="img-fluid tweet-image" />
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Beğeni ve Yorum -->
+                <div class="tweet-actions">
+                    <form action="{% url 'like_post' post.id %}" method="post" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit">
+                            <i class="bi bi-heart"></i> Beğen ({{ post.likes.count }})
+                        </button>
+                    </form>
+                    <a href="{% url 'comment_post' post.id %}">Yorum Yap</a>
+                </div>
+
+                <!-- Yorumlar -->
+                <ul class="mt-2 ps-0" style="list-style-type: none;">
+                    {% for comment in post.comments.all %}
+                    <li>
+                        <strong>{{ comment.user.username }}:</strong> {{ comment.content }}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <script src="https://
