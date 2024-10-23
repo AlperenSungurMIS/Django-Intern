@@ -1,22 +1,25 @@
-from django.shortcuts import render
-from django.http import HttpResponse
+from django.shortcuts import render, redirect
+from django.http import HttpResponse, HttpResponseRedirect
 
 def kurslar(request):
-    return HttpResponse('kurs listesi')
-def programlama(request):
-    return HttpResponse('programlama kurs listesi')
-def mobiluygulamalar(request):
-    return HttpResponse('mobil uygulanamalar programlama kurs listesi')
-def details(request):
-    return HttpResponse('kurs detay sayfası')
-def getCoursesByCategory(request, category):
-    text = " "
-    if(category == "programlama"):
-        text = "programlama kategorisine ait kurslar"
-    elif(category == "web-gelistirme"):
-        text = "yanlış kategori seçimi"
-    else :
-        text = "yanlış kategori seçimi"
+    return HttpResponse('Kurs listesi')
+
+def details(request, kurs_adi):
+    return HttpResponse(f'{kurs_adi} detay sayfası')
+
+def getCoursesByCategory(request, category_name):
+    text = ""
+    if category_name == "programlama":
+        text = "Programlama kategorisine ait kurslar"
+    elif category_name == "web-gelistirme":
+        text = "Web geliştirme kategorisine ait kurslar"
+    else:
+        text = "Yanlış kategori seçimi"
     return HttpResponse(text)
 
-
+def getCoursesByCategoryId(request, category_id):
+    # Örnek olarak kategori ID'si "1" olanlar programlama kurslarına yönlendiriliyor
+    if category_id == "1":
+        return HttpResponseRedirect('/programlama')
+    else:
+        return HttpResponse('Yanlış kategori ID')
